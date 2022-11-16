@@ -1,5 +1,5 @@
 const mysqlConnection = require("../db/dbConnection");
-
+const { getRole } = require('../helpers/helpers');
 
 const getUser = (req, res) => {
     const { userName, password } = req.body;
@@ -16,10 +16,8 @@ const getUser = (req, res) => {
 
 const addUser = (req, res) => {
     const { userName = "alex", password = "111", roleId = "EMPLOYED" } = req.body;
-    let roleIdStatus = null;
-    roleId === "ADMIN" ? (roleIdStatus = 1) : true;
-    roleId === "EMPLOYED" ? (roleIdStatus = 2) : true;
-
+    // -> get a valid Role
+    let roleIdStatus = getRole(roleId);
     // -> Validate if one user is already saved
     if (roleIdStatus) {
         mysqlConnection.query(`SELECT * FROM USERS WHERE user_name='${userName}';`, (error, result) => {
@@ -54,9 +52,27 @@ const addUser = (req, res) => {
 };
 
 
+const updateUser = (req, res) => {
+    const { userName = "alexischavez", password="none", roleId="ADMIN", id = 2 } = req.body;
+    let roleStatus = getRole(roleId);
+    mysqlConnection.query(`UPDATE USERS user_name ='${userName}', password='${password}', roleId='${roleStatus}' WHERE user_id=${id};`, 
+    (error, result)=>{
+        if(error)
+        {
+            return res.status(500).json({
+                message: "INTERNAL SERVER ERROR"
+            });
+        }
+        console.log(result)
+        // res.status(200).json({
+        //     message:""
+        // })
+    });
+}
   
 
 module.exports = {
     getUser,
-    addUser
+    addUser,
+    updateUser
 }
