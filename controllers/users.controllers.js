@@ -91,10 +91,27 @@ const updateUser = (req, res) => {
     });
 }
   
+const deleteUser = (req, res) => {
+    const { id } = req.body;
+    mysqlConnection.query(`DELETE FROM USERS WHERE user_id=${id};`, (error, result) => {
+        if(error)
+        {
+            console.log(error);
+            res.status(500).json({
+                message:"INTERNAL SERVER ERROR"
+            });
+        }
+        res.status(200).json({
+            message:"USER REMOVED SUCCESSFULY",
+            ...result
+        });
+    });
+}
 
 module.exports = {
     getUser,
     addUser,
     updateUser,
-    getAllUsers
+    getAllUsers,
+    deleteUser
 }

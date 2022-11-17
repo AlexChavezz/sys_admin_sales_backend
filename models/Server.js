@@ -18,6 +18,7 @@ class Server {
     }
     routes() {
         this.app.use(this.usersPath, require('../routes/users.routes'));
+        this.app.use(this.productsPath, require('../routes/products.routes'));
     }
     listen() {
         this.app.listen(this.port, () => {
